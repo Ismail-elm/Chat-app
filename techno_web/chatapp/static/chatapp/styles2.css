@@ -1,0 +1,285 @@
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  height: 100vh;
+  overflow: hidden;
+  color: #2d3748;
+}
+
+/* Header */
+#entete {
+  background: #fff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  height: 70px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+#logout a {
+  color: #e53e3e;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  display: inline-block;
+}
+
+#logout a:hover {
+  background: #fff5f5;
+  border-color: #fc8181;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.2);
+}
+
+#profile {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 1.2rem;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f0f9ff 100%);
+  border-radius: 50px;
+  border: 2px solid #bee3f8;
+}
+
+#profile i {
+  font-size: 1.3rem;
+  color: #2b6cb0;
+  background: #fff;
+  padding: 0.4rem;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#profile p {
+  font-weight: 600;
+  color: #2c5282;
+  font-size: 0.95rem;
+}
+
+/* Main Section */
+#main-section {
+  display: flex;
+  height: calc(100vh - 70px);
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* Discussions (Salons List) */
+#discussions {
+  width: 30%;
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Forms */
+.create-salon-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.text-input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border: 2px solid #e2e8f0;
+  width: calc(100% - 50px);
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: #f7fafc;
+}
+
+.text-input:focus {
+  border-color: #4299e1;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.btn {
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.create-btn {
+  background: #48bb78;
+  color: #fff;
+  min-width: 45px;
+}
+
+.create-btn:hover {
+  background: #38a169;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+/* Salon Items */
+.salon-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: #f7fafc;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  min-height: 50px;
+}
+
+.salon-item:hover {
+  background: #e3f2fd;
+  border-color: #90cdf4;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(66, 153, 225, 0.15);
+}
+
+.salon-item p:first-child {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.salon-item p:last-child {
+  font-size: 0.8rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* Messages Container */
+.messages-container {
+  flex: 1;
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  gap: 1rem;
+}
+
+.placeholder-message {
+  text-align: center;
+  color: #a0aec0;
+  font-size: 1rem;
+  margin: auto;
+  padding: 2rem;
+}
+
+/* Scrollbar Styling */
+#discussions::-webkit-scrollbar,
+.messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+#discussions::-webkit-scrollbar-track,
+.messages-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+#discussions::-webkit-scrollbar-thumb,
+.messages-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+#discussions::-webkit-scrollbar-thumb:hover,
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  #discussions {
+    width: 400px;
+    min-width: 350px;
+  }
+}
+
+@media (max-width: 1024px) {
+  #main-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  #discussions {
+    width: 100%;
+    min-width: unset;
+    height: 200px;
+  }
+
+  .messages-container {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  #entete {
+    padding: 1rem;
+  }
+
+  #main-section {
+    padding: 1rem;
+  }
+
+  #discussions {
+    height: auto;
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  #profile p {
+    display: none;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+}

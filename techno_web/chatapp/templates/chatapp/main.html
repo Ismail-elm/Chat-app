@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat app</title>
+    <link rel="stylesheet" href="{% static 'chatapp/styles2.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="main-page">
+    <!-- En-tête -->
+    <div id="entete">
+        <div id="logout">
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+        <div id="profile">
+            <i class="fa-solid fa-user"></i>
+            <p>{{ username }}</p>
+        </div>
+    </div>
+
+    <!-- Section principale -->
+    <div id="main-section">
+        <!-- Liste des salons -->
+        <div id="discussions" class="salons-list">
+        <h3 class="section-title">Salons</h3>
+        <form method="post" class="create-salon-form">
+            {% csrf_token %}
+            <input type="text" placeholder="Nouveau salon" name="salon_name" required class="text-input">
+            <input type="submit" value="➕" name="create_salon" class="btn create-btn">
+        </form>
+        {% for salon in salons %}
+            <a href="{% url 'messagerie' name=username salon_id=salon.id %}" class="salon-item">
+                <p>{{ salon.salon_name }}</p>
+                <p>{{ salon.created_at|date:"d/m/Y H:i" }}</p>
+            </a>
+        {% endfor %}
+    </div>
+
+        <!-- Zone des messages -->
+        <div id="messages" class="messages-container">
+            <p class="placeholder-message">Cliquez sur un salon</p>
+        </div>
+    </div>
+</body>
+</html>

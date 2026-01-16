@@ -1,0 +1,88 @@
+/* styles.css */
+
+/* Reset basique */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Corps de la page */
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1e1e2f, #1e90ff);
+    color: #fff;
+}
+
+/* Container du formulaire */
+#container {
+    background-color: #fff;
+    color: #333;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    width: 350px;
+    text-align: center;
+}
+
+/* Titre */
+#container h2 {
+    margin-bottom: 25px;
+    color: #1e1e2f;
+}
+
+/* Inputs */
+#container input[type="text"],
+#container input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: 2px solid #ccc;
+    border-radius: 25px;
+    outline: none;
+    transition: 0.3s;
+}
+
+#container input[type="text"]:focus,
+#container input[type="password"]:focus {
+    border-color: #1e90ff;
+}
+
+/* Bouton */
+#container input[type="submit"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: #1e90ff;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#container input[type="submit"]:hover {
+    background-color: #0066cc;
+}
+
+/* Message d'erreur */
+#container p {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+#container a {
+    color: #1e90ff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#container a:hover {
+    text-decoration: underline;
+}
