@@ -137,7 +137,7 @@ def messagerie(request, name, salon_id) :
         }
     return render(request, 'chatapp/messagerie.html', context)
 
-
+# AJAX view to get chat data
 from django.http import JsonResponse
 
 def get_chat_data(request, salon_id):
