@@ -99,7 +99,7 @@ def messagerie(request, name, salon_id) :
                 user_not_found = False
             except MyUser.DoesNotExist:
                 user_not_found = True 
-            if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 if user_not_found:
                     return JsonResponse({'error': 'Utilisateur non trouvé'})
                 else:
