@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'chatapp/styles3.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body class="messagerie-page" data-username="{{ username }}" data-salon-id="{{ salon.id }}" data-is-creator="{% if myuser == creator %}true{% else %}false{% endif %}">
+<body class="messagerie-page">
     <!-- En-tête -->
     <div id="entete">
         <div id="logout">
@@ -38,7 +38,7 @@
                 {% endfor %}
             </div>
             <!-- Liste des membres -->
-            <div class="discussions members-list" id="members-list">
+            <div class="discussions members-list">
                 <h3 class="section-title">Members</h3>
                 <!-- Quitter ou supprimer un salon -->
                 <form method="post" class="leave-delete-form">
@@ -100,9 +100,9 @@
             <!-- Zone de saisie -->
             <form id="text-area" method="post" class="send-message-form">
                 {% csrf_token %}
-                <input type="text" placeholder="Écrire un message" name="my_message" required class="text-input message-input" id="chat-input">
+                <input type="text" placeholder="Écrire un message" name="my_message" required class="text-input message-input">
                 <i class="fa-regular fa-face-grin-wink emoji-icon"></i>
-                <input type="submit" value="Envoyer" name="send_message" id="send-btn" class="btn send-btn">
+                <input type="submit" value="Envoyer" name="send_message" class="btn send-btn">
             </form>
         </div>
     </div>

@@ -83,7 +83,6 @@ def messagerie(request, name, salon_id) :
             my_message = request.POST.get("my_message")
             if my_message :
                 Message.objects.create(user=myuser, salon=salon, message_text=my_message)
-                return redirect('messagerie', name=myuser.username_text, salon_id=salon.id)
         # Handle salon creation
         elif "create_salon" in request.POST:
             salon_name = request.POST.get("salon_name")
@@ -96,14 +95,8 @@ def messagerie(request, name, salon_id) :
             try:
                 new_member = MyUser.objects.get(username_text=member_name)
                 salon.members.add(new_member)
-                user_not_found = False
             except MyUser.DoesNotExist:
                 user_not_found = True 
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                if user_not_found:
-                    return JsonResponse({'error': 'Utilisateur non trouvé'})
-                else:
-                    return JsonResponse({'success': True}) 
         # Handle removing member from salon
         elif "remove_member" in request.POST:
             member_id = request.POST.get("remove_member")
@@ -136,35 +129,3 @@ def messagerie(request, name, salon_id) :
         "user_not_found": user_not_found
         }
     return render(request, 'chatapp/messagerie.html', context)
-
-# AJAX view to get chat data
-from django.http import JsonResponse
-
-def get_chat_data(request, salon_id):
-    if 'user_id' not in request.session:
-        return JsonResponse({'error': 'Not logged in'})
-
-    myuser = MyUser.objects.get(id=request.session['user_id'])
-    try:
-        salon = Salon.objects.get(id=salon_id)
-    except Salon.DoesNotExist:
-        return JsonResponse({'salon_deleted': True})
-    
-    is_member = myuser in salon.members.all()
-    if not is_member:
-        return JsonResponse({'is_member': False, 'messages': [], 'members': []})
-    
-    messages = salon.message_set.all().order_by("written_at")
-    members = salon.members.all()
-    data = {
-        'is_member': True,
-        'messages': [
-            {"id": m.id, "user": m.user.username_text, "text": m.message_text, "time": m.written_at.strftime("%H:%M")}
-            for m in messages
-        ],
-        'members': [
-            {"id": m.id, "username": m.username_text, "is_creator": m == salon.creator}
-            for m in members
-        ]
-    }
-    return JsonResponse(data) 
