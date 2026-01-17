@@ -38,7 +38,7 @@
                 {% endfor %}
             </div>
             <!-- Liste des membres -->
-            <div class="discussions members-list">
+            <div class="discussions members-list" id="members-list">
                 <h3 class="section-title">Members</h3>
                 <!-- Quitter ou supprimer un salon -->
                 <form method="post" class="leave-delete-form">
@@ -100,13 +100,19 @@
             <!-- Zone de saisie -->
             <form id="text-area" method="post" class="send-message-form">
                 {% csrf_token %}
-                <input type="text" placeholder="Écrire un message" name="my_message" required class="text-input message-input">
+                <input type="text" placeholder="Écrire un message" name="my_message" required class="text-input message-input" id="chat-input">
                 <i class="fa-regular fa-face-grin-wink emoji-icon"></i>
-                <input type="submit" value="Envoyer" name="send_message" class="btn send-btn">
+                <input type="submit" value="Envoyer" name="send_message" id="send-btn" class="btn send-btn">
             </form>
         </div>
     </div>
     {% load static %}
+    <script>
+        const csrfToken = "{{ csrf_token }}";
+        const username = "{{ username }}";
+        const salonId = {{ salon.id }};
+        const isCreator = {{ myuser == creator|lower }};
+    </script>
     <script src="{% static 'chatapp/script.js' %}"></script>
 </body>
 </html>

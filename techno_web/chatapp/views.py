@@ -83,6 +83,7 @@ def messagerie(request, name, salon_id) :
             my_message = request.POST.get("my_message")
             if my_message :
                 Message.objects.create(user=myuser, salon=salon, message_text=my_message)
+                return redirect('messagerie', name=myuser.username_text, salon_id=salon.id)
         # Handle salon creation
         elif "create_salon" in request.POST:
             salon_name = request.POST.get("salon_name")
@@ -130,4 +131,34 @@ def messagerie(request, name, salon_id) :
         }
     return render(request, 'chatapp/messagerie.html', context)
 
+
+from django.http import JsonResponse
+
+def get_chat_data(request, salon_id):
+    if 'user_id' not in request.session:
+        return JsonResponse({'error': 'Not logged in'})
+
+    myuser = MyUser.objects.get(id=request.session['user_id'])
+    try:
+        salon = Salon.objects.get(id=salon_id)
+    except Salon.DoesNotExist:
+        return JsonResponse({'salon_deleted': True})
     
+    is_member = myuser in salon.members.all()
+    if not is_member:
+        return JsonResponse({'is_member': False, 'messages': [], 'members': []})
+    
+    messages = salon.message_set.all().order_by("written_at")
+    members = salon.members.all()
+    data = {
+        'is_member': True,
+        'messages': [
+            {"id": m.id, "user": m.user.username_text, "text": m.message_text, "time": m.written_at.strftime("%H:%M")}
+            for m in messages
+        ],
+        'members': [
+            {"id": m.id, "username": m.username_text, "is_creator": m == salon.creator}
+            for m in members
+        ]
+    }
+    return JsonResponse(data) 
