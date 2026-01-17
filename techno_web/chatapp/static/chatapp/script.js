@@ -1,4 +1,10 @@
 window.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const username = body.dataset.username;
+    const salonId = parseInt(body.dataset.salonId);
+    const isCreator = body.dataset.isCreator === 'true';
+
     const messagesDiv = document.getElementById('messages');
     const membersDiv = document.getElementById('members-list');
 
