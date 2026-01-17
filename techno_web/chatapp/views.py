@@ -96,8 +96,14 @@ def messagerie(request, name, salon_id) :
             try:
                 new_member = MyUser.objects.get(username_text=member_name)
                 salon.members.add(new_member)
+                user_not_found = False
             except MyUser.DoesNotExist:
                 user_not_found = True 
+            if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+                if user_not_found:
+                    return JsonResponse({'error': 'Utilisateur non trouvé'})
+                else:
+                    return JsonResponse({'success': True}) 
         # Handle removing member from salon
         elif "remove_member" in request.POST:
             member_id = request.POST.get("remove_member")

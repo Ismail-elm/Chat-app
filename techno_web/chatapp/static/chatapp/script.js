@@ -132,23 +132,30 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add member via AJAX
-    const addMemberForm = document.querySelector('.add-member-form');
-    if (addMemberForm) {
-        addMemberForm.addEventListener('submit', (e) => {
+    // Add member via AJAX (event delegation)
+    membersDiv.addEventListener('submit', (e) => {
+        if (e.target.classList.contains('add-member-form')) {
             e.preventDefault();
-            const formData = new FormData(addMemberForm);
+            const form = e.target;
+            const formData = new FormData(form);
             formData.append('csrfmiddlewaretoken', csrfToken);
 
             fetch("", {
                 method: "POST",
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
                 body: formData
-            }).then(() => {
-                addMemberForm.reset();
-                fetchChatData(); // Update members
+            }).then(response => response.json()).then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    form.reset();
+                    fetchChatData(); // Update members
+                }
             }).catch(err => console.error("Failed to add member:", err));
-        });
-    }
+        }
+    });
 
     // Remove member via AJAX
     membersDiv.addEventListener('click', (e) => {
