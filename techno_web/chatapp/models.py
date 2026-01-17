@@ -20,6 +20,6 @@ class Message(models.Model) :
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     salon = models.ForeignKey(Salon, on_delete=models.CASCADE)
     message_text = models.CharField(max_length=1000)
-    written_at = models.DateTimeField(auto_now_add=True)
+    written_at = models.DateTimeField(auto_now_add=True) 
     def __str__(self):
         return f"{self.user.username_text}: {self.message_text[:20]}"

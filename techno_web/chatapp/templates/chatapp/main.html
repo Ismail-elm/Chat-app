@@ -23,24 +23,28 @@
     <div id="main-section">
         <!-- Liste des salons -->
         <div id="discussions" class="salons-list">
-        <h3 class="section-title">Salons</h3>
-        <form method="post" class="create-salon-form">
-            {% csrf_token %}
-            <input type="text" placeholder="Nouveau salon" name="salon_name" required class="text-input">
-            <input type="submit" value="➕" name="create_salon" class="btn create-btn">
-        </form>
-        {% for salon in salons %}
-            <a href="{% url 'messagerie' name=username salon_id=salon.id %}" class="salon-item">
-                <p>{{ salon.salon_name }}</p>
-                <p>{{ salon.created_at|date:"d/m/Y H:i" }}</p>
-            </a>
-        {% endfor %}
-    </div>
+            <h3 class="section-title">Salons</h3>
+            <form method="post" class="create-salon-form">
+                {% csrf_token %}
+                <input type="text" placeholder="Nouveau salon" name="salon_name" required class="text-input">
+                <input type="submit" value="➕" name="create_salon" class="btn create-btn">
+            </form>
+            <div id="salons-list" data-username="{{ username }}">
+                {% for salon in salons %}
+                    <a href="{% url 'messagerie' name=username salon_id=salon.id %}" class="salon-item" data-id="{{ salon.id }}">
+                        <p>{{ salon.salon_name }} {% if salon.creator == myuser %}<span style="color: red;">(Owner)</span>{% else %}<span style="color: green;">(Invited)</span>{% endif %}</p>
+                        <p>created at {{ salon.created_at|date:"d/m/Y H:i" }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
 
         <!-- Zone des messages -->
         <div id="messages" class="messages-container">
             <p class="placeholder-message">Cliquez sur un salon</p>
         </div>
     </div>
+    
+    <script src="{% static 'chatapp/script-main.js' %}"></script>
 </body>
 </html>

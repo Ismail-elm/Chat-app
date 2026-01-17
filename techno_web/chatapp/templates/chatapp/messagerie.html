@@ -27,15 +27,17 @@
                 <h3 class="section-title">Salons</h3>
                 <form method="post" class="create-salon-form">
                     {% csrf_token %}
-                    <input type="text" placeholder="Nouveau salon" name="salon_name" required class="text-input">
+                    <input type="text" placeholder="Salon name" name="salon_name" required class="text-input">
                     <input type="submit" value="➕" name="create_salon" class="btn create-btn">
                 </form>
-                {% for salon in salons %}
-                    <a href="{% url 'messagerie' name=username salon_id=salon.id %}" class="salon-item">
-                        <p>{{ salon.salon_name }}</p>
-                        <p>{{ salon.created_at|date:"d/m/Y H:i" }}</p>
-                    </a>
-                {% endfor %}
+                <div id="salons-list" data-username="{{ username }}">
+                    {% for salon in salons %}
+                        <a href="{% url 'messagerie' name=username salon_id=salon.id %}" class="salon-item {% if salon.id == salon_id %}focused-salon{% endif %}">
+                            <p>{{ salon.salon_name }} {% if salon.creator == myuser %}<span style="color: red;">(Owner)</span>{% else %}<span style="color: green;">(Invited)</span>{% endif %}</p>
+                            <p>created at {{ salon.created_at|date:"d/m/Y H:i" }}</p>
+                        </a>
+                    {% endfor %}
+                </div>
             </div>
             <!-- Liste des membres -->
             <div class="discussions members-list">
@@ -53,50 +55,54 @@
                 {% if myuser == creator %} 
                     <form method="post" class="add-member-form">
                         {% csrf_token %}
-                        <input type="text" placeholder="Nouveau membre" name="member_name" required class="text-input">
+                        <input type="text" placeholder="Add a member" name="member_name" required class="text-input">
                         <input type="submit" value="➕" name="add_member" class="btn add-btn">
-                        <p class="error-message">{% if user_not_found %}Utilisateur non trouvé{% endif %}</p>
+                        <p class="error-message">{% if user_not_found %}User not found {% endif %}{% if user_already_in %}User already in salon{% endif %}</p>
                     </form>
                 {% endif %}
                 <!-- Afficher les membres -->
-                {% for member in members %}
-                    <div class="member-item">
-                        <p>{% if member == creator %}👑{% else %}👤{% endif %} {{ member.username_text }} {% if member == myuser %} (Vous) {% endif %}</p>
-                        {% if myuser == creator and member != creator %}
-                            <form method="post" class="remove-member-form">
-                                {% csrf_token %}
-                                <input type="hidden" name="remove_member" value="{{ member.id }}">
-                                <input type="submit" value="🚫" name="Remove_member" class="btn remove-btn">
-                            </form>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+                <div id="members-list" data-salon-id="{{ salon.id }}">
+                    {% for member in members %}
+                        <div class="member-item {% if member == myuser %}member-focused{% endif %}" data-id="{{ member.id }}">
+                            <p>{% if member == creator %}👑{% else %}👤{% endif %} {{ member.username_text }} {% if member == myuser %} (Vous) {% endif %}</p>
+                            {% if myuser == creator and member != creator %}
+                                <form method="post" class="remove-member-form" data-username="{{ member.username_text }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="remove_member" value="{{ member.id }}">
+                                    <input type="submit" value="🚫" name="Remove_member" class="btn remove-btn">
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         <!-- Zone des messages -->
         <div id="messages" class="messages-container">
-            {% if messages %}
-                {% for msg in messages %}
-                    <div class="message {% if msg.user == myuser %}me{% else %}other{% endif %}">
-                        {% if msg.user == myuser or myuser == creator %}
-                        <form method="post" class="remove-message-form">
-                            {% csrf_token %}
-                            <input type="hidden" name="remove_message" value="{{ msg.id }}">
-                            <button type="submit" name="Remove_message" class="message-delete-btn" title="Delete message">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </form>
-                        {% endif %}
-                        <div class="message-header">
-                            <span class="username">{{ msg.user.username_text }}</span>
+            <div id="messages-list" data-salon-id="{{ salon.id }}">
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div class="message {% if msg.user == myuser %}me{% else %}other{% endif %}" data-id="{{ msg.id }}">
+                            {% if msg.user == myuser or myuser == creator %}
+                            <form method="post" class="remove-message-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="remove_message" value="{{ msg.id }}">
+                                <button type="submit" name="Remove_message" class="message-delete-btn" title="Delete message">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                            <div class="message-header">
+                                <span class="username">{{ msg.user.username_text }}</span>
+                            </div>
+                            <p class="message-text">{{ msg.message_text }}</p>
+                            <span class="time">{{ msg.written_at|date:"H:i" }}</span>
                         </div>
-                        <p class="message-text">{{ msg.message_text }}</p>
-                        <span class="time">{{ msg.written_at|date:"H:i" }}</span>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p class="no-messages">Aucun message pour le moment. Envoyez le premier !</p>
-            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p class="no-messages">Aucun message pour le moment. Envoyez le premier !</p>
+                {% endif %}
+            </div>
             <!-- Zone de saisie -->
             <form id="text-area" method="post" class="send-message-form">
                 {% csrf_token %}
@@ -104,6 +110,17 @@
                 <i class="fa-regular fa-face-grin-wink emoji-icon"></i>
                 <input type="submit" value="Envoyer" name="send_message" class="btn send-btn">
             </form>
+        </div>
+    </div>
+    <!-- Confirmation Modal -->
+    <div id="remove-member-modal" class="modal">
+        <div class="modal-content">
+            <h3>Confirm Removal</h3>
+            <p id="modal-message">Are you sure you want to remove user <span id="member-username"></span>?</p>
+            <div class="modal-buttons">
+                <button id="modal-cancel" class="btn cancel-btn">Cancel</button>
+                <button id="modal-confirm" class="btn danger-btn">Remove</button>
+            </div>
         </div>
     </div>
     {% load static %}

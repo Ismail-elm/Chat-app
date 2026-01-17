@@ -58,11 +58,13 @@ def main(request, name) :
             salon.members.add(myuser)
     salons = Salon.objects.filter(Q(creator=myuser) | Q(members=myuser)).distinct().order_by("-created_at")
     context = {"username" : name,
-               "salons" : salons
+               "salons" : salons,
+               "myuser": myuser
                }
     return render(request, 'chatapp/main.html', context)
 
 def messagerie(request, name, salon_id) :
+    # Check user authentication
     if 'user_id' not in request.session:
         return redirect('login')
     myuser = MyUser.objects.get(id=request.session['user_id'])
@@ -76,6 +78,7 @@ def messagerie(request, name, salon_id) :
         return redirect('main', name=name)
     creator = salon.creator
     user_not_found = False
+    user_already_in = False
 
     if request.method == "POST" :
         # Handle sending message
@@ -83,18 +86,23 @@ def messagerie(request, name, salon_id) :
             my_message = request.POST.get("my_message")
             if my_message :
                 Message.objects.create(user=myuser, salon=salon, message_text=my_message)
+                return redirect("messagerie", name=name, salon_id=salon_id)
         # Handle salon creation
         elif "create_salon" in request.POST:
             salon_name = request.POST.get("salon_name")
             if salon_name:
                 salon_created = Salon.objects.create(salon_name=salon_name, creator=myuser)
                 salon_created.members.add(myuser)
+                return redirect("messagerie", name=name, salon_id=salon_created.id)
         # Handle adding member to salon
         elif "add_member" in request.POST:
             member_name = request.POST.get("member_name")
             try:
                 new_member = MyUser.objects.get(username_text=member_name)
-                salon.members.add(new_member)
+                if new_member in salon.members.all():
+                    user_already_in = True
+                else:
+                    salon.members.add(new_member)
             except MyUser.DoesNotExist:
                 user_not_found = True 
         # Handle removing member from salon
@@ -122,10 +130,82 @@ def messagerie(request, name, salon_id) :
     context = {
         "username" : name,
         "salons" : salons,
+        "salon" : salon,
+        "salon_id": salon_id,
         "creator" : creator,
         "messages" : messages,
         "members" : members,
         "myuser" : myuser,
-        "user_not_found": user_not_found
+        "user_not_found": user_not_found,
+        "user_already_in": user_already_in
         }
     return render(request, 'chatapp/messagerie.html', context)
+
+# Ajax view to get messages
+from django.http import JsonResponse
+def get_messages(request, salon_id):
+    if 'user_id' not in request.session:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+    myuser = MyUser.objects.get(id=request.session['user_id'])
+    after_id = request.GET.get('after_id')
+
+    # Récupère tous les messages du salon, triés par date
+    messages = Message.objects.filter(salon_id=salon_id).order_by('written_at')
+
+    # Si on a after_id, ne garder que les messages plus récents (optional now)
+    if after_id:
+        messages = messages.filter(id__gt=int(after_id))
+
+    data = []
+    for msg in messages:
+        data.append({
+            "id": msg.id,
+            "text": msg.message_text,
+            "time": msg.written_at.strftime("%H:%M"),
+            "username": msg.user.username_text,
+            "is_me": msg.user == myuser,
+            "can_delete": msg.user == myuser or myuser == msg.salon.creator
+        })
+
+    return JsonResponse(data, safe=False)
+
+# Ajax view to get salon members
+def get_members(request, salon_id):
+    if 'user_id' not in request.session:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+    myuser = MyUser.objects.get(id=request.session['user_id'])
+    salon = Salon.objects.get(id=salon_id)
+    members = salon.members.all()
+
+    data = []
+    for member in members:
+        data.append({
+            "id": member.id,
+            "username_text": member.username_text,
+            "is_me": member == myuser,
+            "is_creator": member == salon.creator,
+            "can_remove": myuser == salon.creator and member != salon.creator
+        })
+
+    return JsonResponse(data, safe=False)
+
+# Ajax view to get salons
+def get_salons(request):
+    if 'user_id' not in request.session:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+    myuser = MyUser.objects.get(id=request.session['user_id'])
+    salons = Salon.objects.filter(Q(creator=myuser) | Q(members=myuser)).distinct().order_by("-created_at")
+
+    data = []
+    for salon in salons:
+        data.append({
+            "username": myuser.username_text,
+            "id": salon.id,
+            "salon_name": salon.salon_name,
+            "is_me_creator": salon.creator == myuser,
+            "is_me_member": myuser in salon.members.all(),
+            "is_me_in": myuser in salon.members.all(),
+            "created_at": salon.created_at.strftime("%d/%m/%Y %H:%M"),
+        })
+
+    return JsonResponse(data, safe=False)

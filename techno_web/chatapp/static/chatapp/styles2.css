@@ -189,6 +189,12 @@ body {
   margin: 0;
 }
 
+#salons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
 /* Messages Container */
 .messages-container {
   flex: 1;
