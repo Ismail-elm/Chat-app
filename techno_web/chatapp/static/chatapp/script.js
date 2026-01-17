@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     const username = body.dataset.username;
-    const salonId = parseInt(body.dataset.salonId);
+    const salonId = parseInt(window.location.pathname.split('/')[3]); // /main/username/salonId
     const isCreator = body.dataset.isCreator === 'true';
 
     const messagesDiv = document.getElementById('messages');
@@ -214,6 +214,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     // Poll every 2 seconds
-    setInterval(fetchChatData, 500);
+    setInterval(fetchChatData, 2000);
     fetchChatData(); // Initial fetch
 });
