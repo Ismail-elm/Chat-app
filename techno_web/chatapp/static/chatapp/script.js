@@ -38,10 +38,71 @@ window.addEventListener('DOMContentLoaded', () => {
         setTimeout(scrollToBottom, 100);
     });
 
-    // Emoji picker code...
+    // ========================================
+    // EMOJI PICKER CODE
+    // ========================================
     const emojiIcon = document.querySelector('.emoji-icon');
     const messageInput = document.querySelector('input[name="my_message"]');
-    // ... all your emoji picker code ...
+    
+    // Create emoji picker container
+    const emojiPicker = document.createElement('div');
+    emojiPicker.className = 'emoji-picker';
+    emojiPicker.style.display = 'none';
+    
+    // Popular emojis categorized
+    const emojiCategories = {
+        'Smileys': ['😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😌', '😔', '😪', '🤤', '😴'],
+        'Emotions': ['😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '😵', '🤯', '🤠', '🥳', '😎', '🤓', '🧐', '😕', '😟', '🙁', '☹️', '😮', '😯', '😲', '😳', '🥺', '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱'],
+        'Gestures': ['👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '💪'],
+        'Hearts': ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟'],
+        'Animals': ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐢', '🐍', '🦎', '🐙', '🦑', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐈', '🐓', '🦃', '🦚', '🦜', '🦢', '🦩', '🕊️', '🐇', '🦝', '🦨', '🦡', '🦦', '🦥', '🐁', '🐀', '🐿️', '🦔'],
+        'Food': ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🌽', '🥕', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🥪', '🥙', '🧆', '🌮', '🌯', '🥗', '🥘', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🍩', '🍪', '🌰', '🥜', '🍯'],
+        'Activities': ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🥅', '⛳', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛷', '⛸️', '🥌', '🎿', '⛷️', '🏂', '🏋️', '🤼', '🤸', '🤺', '⛹️', '🤾', '🏌️', '🏇', '🧘', '🏊', '🤽', '🚣', '🧗', '🚴', '🚵', '🎪', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🥁', '🎷', '🎺', '🎸', '🪕', '🎻', '🎲', '♟️', '🎯', '🎳', '🎮', '🎰', '🧩']
+    };
+    
+    // Build emoji picker HTML
+    let pickerHTML = '<div class="emoji-categories">';
+    for (const [category, emojis] of Object.entries(emojiCategories)) {
+        pickerHTML += `<div class="emoji-category">
+            <div class="emoji-category-title">${category}</div>
+            <div class="emoji-grid">`;
+        emojis.forEach(emoji => {
+            pickerHTML += `<span class="emoji-item">${emoji}</span>`;
+        });
+        pickerHTML += '</div></div>';
+    }
+    pickerHTML += '</div>';
+    
+    emojiPicker.innerHTML = pickerHTML;
+    document.body.appendChild(emojiPicker);
+    
+    // Toggle emoji picker
+    emojiIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = emojiPicker.style.display === 'block';
+        emojiPicker.style.display = isVisible ? 'none' : 'block';
+        
+        if (!isVisible) {
+            // Position the picker near the icon
+            const rect = emojiIcon.getBoundingClientRect();
+            emojiPicker.style.position = 'absolute';
+            emojiPicker.style.bottom = rect.top - 500 + 'px';
+            emojiPicker.style.left = rect.left - 250 + 'px';
+        }
+    });
+    
+    // Add emoji to input when clicked
+    emojiPicker.addEventListener('click', (e) => {
+        if (e.target.classList.contains('emoji-item')) {
+            const emoji = e.target.textContent;
+            const cursorPos = messageInput.selectionStart;
+            const textBefore = messageInput.value.substring(0, cursorPos);
+            const textAfter = messageInput.value.substring(cursorPos);
+            messageInput.value = textBefore + emoji + textAfter;
+            messageInput.focus();
+            messageInput.selectionStart = messageInput.selectionEnd = cursorPos + emoji.length;
+        }
+    });
 
     // Hide emoji picker when clicking outside
     document.addEventListener('click', (e) => {
@@ -49,9 +110,13 @@ window.addEventListener('DOMContentLoaded', () => {
             emojiPicker.style.display = 'none';
         }
     });
+    
+    // ========================================
+    // END OF EMOJI PICKER CODE
+    // ========================================
 
     // ========================================
-    // ADD THE MODAL CODE HERE - BEFORE THE INTERVALS
+    // MODAL CODE
     // ========================================
     
     // Member removal confirmation modal
@@ -183,6 +248,7 @@ function loadMessages() {
         })
         .catch(err => console.error("Erreur loadMessages:", err));
 }
+
 // load members from server
 function loadMembers() {
     if (!salonId) return;
