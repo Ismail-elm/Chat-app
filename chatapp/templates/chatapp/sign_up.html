@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat app</title>
+    <link rel="stylesheet" href="{% static 'chatapp/styles.css' %}">
+</head>
+<body>
+    <div id="container">
+        <form method="post">
+            {% csrf_token %}
+            <h2>Sign-Up</h2>
+            <input type="text" placeholder="Username" name="username">
+            <input type="password" placeholder="Password" name="password">
+            <input type="password" placeholder="Confirm password" name="confirm_password">
+            <input type="submit" value="Create account" name="create_acc">
+            {% if error %}
+                <p style="color: red;"> {{ error }} </p>
+            {% endif %}
+            <p>Already a member ? <a href="{% url 'login' %}">Login</a> now</p>
+        </form>
+    </div>
+</body>
+</html>
